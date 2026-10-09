@@ -28,9 +28,9 @@ themeBtn.addEventListener("click", function () {
 
 // ===== Gallery viewer: Previous / Next change the photo and caption =====
 const photos = [
-  { src: "images/photo1.jpg", alt: "Photo 1 of my gallery", caption: "Photo 1 caption" },
-  { src: "images/photo2.jpg", alt: "Photo 2 of my gallery", caption: "Photo 2 caption" },
-  { src: "images/photo3.jpg", alt: "Photo 3 of my gallery", caption: "Photo 3 caption" }
+  { src: photo1.jpg", alt: "Photo 1 of my gallery", caption: "Photo 1 caption" },
+  { src: photo2.jpg", alt: "Photo 2 of my gallery", caption: "Photo 2 caption" },
+  { src: photo3.jpg", alt: "Photo 3 of my gallery", caption: "Photo 3 caption" }
 ];
 let current = 0;
 const photoEl = document.getElementById("photo");
