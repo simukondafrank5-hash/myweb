@@ -1,0 +1,91 @@
+// ===== Mobile navigation: open and close the menu with a button =====
+const navToggle = document.getElementById("nav-toggle");
+const navMenu = document.getElementById("nav-menu");
+function toggleMenu() {
+  const isOpen = navMenu.classList.toggle("open");
+  navToggle.setAttribute("aria-expanded", isOpen);
+  navToggle.textContent = isOpen ? "Close" : "Menu";
+}
+navToggle.addEventListener("click", toggleMenu);
+navMenu.addEventListener("click", function (e) {
+  if (e.target.tagName === "A" && navMenu.classList.contains("open")) toggleMenu();
+});
+
+// ===== Theme switch: light and dark appearance (preference is saved) =====
+const themeBtn = document.getElementById("theme-toggle");
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  themeBtn.setAttribute("aria-pressed", theme === "dark");
+  themeBtn.textContent = theme === "dark" ? "Light theme" : "Dark theme";
+  try { localStorage.setItem("theme", theme); } catch (err) { /* storage unavailable */ }
+}
+let savedTheme = "light";
+try { savedTheme = localStorage.getItem("theme") || "light"; } catch (err) { /* ignore */ }
+applyTheme(savedTheme);
+themeBtn.addEventListener("click", function () {
+  applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
+});
+
+// ===== Gallery viewer: Previous / Next change the photo and caption =====
+const photos = [
+  { src: "images/photo1.jpg", alt: "Photo 1 of my gallery", caption: "Photo 1 caption" },
+  { src: "images/photo2.jpg", alt: "Photo 2 of my gallery", caption: "Photo 2 caption" },
+  { src: "images/photo3.jpg", alt: "Photo 3 of my gallery", caption: "Photo 3 caption" }
+];
+let current = 0;
+const photoEl = document.getElementById("photo");
+const captionEl = document.getElementById("caption");
+const counterEl = document.getElementById("counter");
+// Show the photo at the current index and update the caption and counter
+function showPhoto() {
+  photoEl.src = photos[current].src;
+  photoEl.alt = photos[current].alt;
+  captionEl.textContent = photos[current].caption;
+  counterEl.textContent = "Photo " + (current + 1) + " of " + photos.length;
+}
+// Wrap around at the first and last photo
+document.getElementById("next").addEventListener("click", function () {
+  current = (current + 1) % photos.length;
+  showPhoto();
+});
+document.getElementById("prev").addEventListener("click", function () {
+  current = (current - 1 + photos.length) % photos.length;
+  showPhoto();
+});
+showPhoto();
+
+// ===== Contact form: validate name, email and message, then show a local preview =====
+const form = document.getElementById("contact-form");
+const summary = document.getElementById("summary");
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+function setError(field, text) {
+  document.getElementById(field + "-error").textContent = text;
+}
+// Check every field; return true only when all are valid
+function validateForm(name, email, message) {
+  let valid = true;
+  setError("name", ""); setError("email", ""); setError("message", "");
+  if (name.trim() === "") { setError("name", "Enter your name. Spaces alone are not accepted."); valid = false; }
+  if (!emailPattern.test(email.trim())) { setError("email", "Enter an email like name@example.com."); valid = false; }
+  if (message.trim() === "") { setError("message", "Enter a message. Spaces alone are not accepted."); valid = false; }
+  return valid;
+}
+form.addEventListener("submit", function (event) {
+  event.preventDefault(); // keep everything local: nothing is sent
+  const name = form.elements["name"].value;
+  const email = form.elements["email"].value;
+  const message = form.elements["message"].value;
+  summary.className = "";
+  summary.textContent = "";
+  if (!validateForm(name, email, message)) return;
+  const title = document.createElement("h3");
+  title.textContent = "Form data validated (nothing was sent)";
+  const lines = ["Name: " + name.trim(), "Email: " + email.trim(), "Message: " + message.trim()];
+  summary.appendChild(title);
+  lines.forEach(function (line) {
+    const p = document.createElement("p");
+    p.textContent = line; // textContent keeps user text safe
+    summary.appendChild(p);
+  });
+  summary.className = "ok";
+});
